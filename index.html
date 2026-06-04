@@ -202,14 +202,12 @@
     }
     .lang-dropdown {
       display: none;
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
+      position: fixed;
       background: white;
       border-radius: 16px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.25);
       padding: 0.75em;
-      z-index: 999;
+      z-index: 9999;
       grid-template-columns: repeat(3, 1fr);
       gap: 4px;
       min-width: 270px;
@@ -320,7 +318,14 @@ function selectLang(code) {
 
 function toggleLangDropdown() {
   var dd = document.getElementById('lang-dropdown');
-  if (!dd.classList.contains('open')) buildDropdown();
+  var btn = document.getElementById('lang-btn');
+  if (!dd.classList.contains('open')) {
+    buildDropdown();
+    var r = btn.getBoundingClientRect();
+    dd.style.top = (r.bottom + 8) + 'px';
+    dd.style.right = (window.innerWidth - r.right) + 'px';
+    dd.style.left = 'auto';
+  }
   dd.classList.toggle('open');
 }
 
