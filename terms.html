@@ -36,11 +36,12 @@
 <script>
 (function(){
   var params = new URLSearchParams(location.search);
-  var lang = params.get('lang') || 'en';
+  var lang = params.get('lang') || localStorage.getItem('siteLang') || 'en';
   var validLangs = ['ar','bg','cs','da','de','el','en','es','fi','fr','hu','id','it','ja','ko','nl','no','pl','pt','ro','ru','sk','sv','tr','uk','zh'];
   if (validLangs.indexOf(lang) === -1) lang = 'en';
 
   function render() {
+    localStorage.setItem('siteLang', lang);
     var t = window.SiteT;
     document.documentElement.lang = lang;
     document.documentElement.dir = t.dir || 'ltr';

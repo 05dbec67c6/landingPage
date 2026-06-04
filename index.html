@@ -175,14 +175,81 @@
       text-align: center;
       border: 2px solid #667eea;
     }
+    .lang-picker {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 0.5em;
+    }
+    .lang-btn {
+      color: white;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      border: 2px solid rgba(255,255,255,0.45);
+      border-radius: 25px;
+      padding: 0.4em 1em;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 500;
+      font-family: inherit;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    .lang-btn:hover {
+      background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.12));
+      border-color: rgba(255,255,255,0.7);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+    }
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      padding: 0.75em;
+      z-index: 999;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      min-width: 270px;
+    }
+    .lang-dropdown.open {
+      display: grid;
+    }
+    .lang-option {
+      padding: 0.5em 0.6em;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.82em;
+      color: #555;
+      transition: all 0.18s;
+      text-align: center;
+      border: 1.5px solid transparent;
+      user-select: none;
+    }
+    .lang-option:hover {
+      background: linear-gradient(135deg, #f0f0ff, #fff0ff);
+      color: #667eea;
+      border-color: #667eea;
+    }
+    .lang-option.selected {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <header>
     <nav class="menu">
       <a href="index.html" class="active">Home</a>
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="privacy-policy.html" id="pp-link">Privacy Policy</a>
+      <a href="terms.html" id="terms-link">Terms &amp; Conditions</a>
+      <div class="lang-picker">
+        <button class="lang-btn" id="lang-btn" onclick="toggleLangDropdown()">🌐 <span id="lang-label">English</span></button>
+        <div class="lang-dropdown" id="lang-dropdown"></div>
+      </div>
     </nav>
     <h1>SmartArt Solutions</h1>
     <p>AI-powered app to identify artworks instantly</p>
@@ -222,5 +289,47 @@
     &copy; 2025 SmartArt Solutions. All rights reserved.
   </footer>
 
+<script>
+var LANGS = {
+  ar:'العربية', bg:'Български', cs:'Čeština', da:'Dansk', de:'Deutsch',
+  el:'Ελληνικά', en:'English', es:'Español', fi:'Suomi', fr:'Français',
+  hu:'Magyar', id:'Bahasa Indonesia', it:'Italiano', ja:'日本語', ko:'한국어',
+  nl:'Nederlands', no:'Norsk', pl:'Polski', pt:'Português', ro:'Română',
+  ru:'Русский', sk:'Slovenčina', sv:'Svenska', tr:'Türkçe', uk:'Українська', zh:'中文'
+};
+
+function applyLang(code) {
+  localStorage.setItem('siteLang', code);
+  document.getElementById('lang-label').textContent = LANGS[code] || 'English';
+  document.getElementById('pp-link').href = 'privacy-policy.html?lang=' + code;
+  document.getElementById('terms-link').href = 'terms.html?lang=' + code;
+}
+
+function buildDropdown() {
+  var current = localStorage.getItem('siteLang') || 'en';
+  document.getElementById('lang-dropdown').innerHTML = Object.keys(LANGS).map(function(c) {
+    return '<div class="lang-option' + (c === current ? ' selected' : '') + '" onclick="selectLang(\'' + c + '\')">' + LANGS[c] + '</div>';
+  }).join('');
+}
+
+function selectLang(code) {
+  applyLang(code);
+  buildDropdown();
+  document.getElementById('lang-dropdown').classList.remove('open');
+}
+
+function toggleLangDropdown() {
+  var dd = document.getElementById('lang-dropdown');
+  if (!dd.classList.contains('open')) buildDropdown();
+  dd.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.lang-picker'))
+    document.getElementById('lang-dropdown').classList.remove('open');
+});
+
+applyLang(localStorage.getItem('siteLang') || 'en');
+</script>
 </body>
 </html>
